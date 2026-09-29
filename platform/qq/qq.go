@@ -892,7 +892,7 @@ func readRecordFile(path string, roots []string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		defer r.Close()
+		defer func() { _ = r.Close() }()
 		// Lstat before Open: opening a FIFO would block.
 		info, err := r.Lstat(rel)
 		if err != nil {
@@ -905,7 +905,7 @@ func readRecordFile(path string, roots []string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		defer f.Close()
+		defer func() { _ = f.Close() }()
 		if info, err = f.Stat(); err != nil {
 			return nil, err
 		}
@@ -935,7 +935,7 @@ func downloadRecord(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("download voice: HTTP %d", resp.StatusCode)
 	}
